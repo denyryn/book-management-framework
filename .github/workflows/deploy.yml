@@ -3,58 +3,69 @@ name: Deploy
 on:
   push:
     branches:
-      - main  # deploy only from main branch
+      - main 
 
 jobs:
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.4'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
 
-    - name: Install Composer dependencies
-      run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-    - name: Copy .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-    - name: Generate Application Key
-      run: php artisan key:generate --force
+      - name: Generate Application Key
+        run: php artisan key:generate --force
 
-    - name: Set Permissions
-      run: chmod -R 777 storage bootstrap/cache
+      - name: Set Permissions
+        run: chmod -R 777 storage bootstrap/cache
 
-    - name: Build Frontend Assets
-      run: |
-        npm ci
-        npm run build
+      - name: Build Frontend Assets
+        run: |
+          npm ci
+          npm run build
 
-    - name: Deploy to Home Server through VPS
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        VPS_USER: ${{ secrets.VPS_USER }}
-        VPS_HOST: ${{ secrets.VPS_HOST }}
-        HOME_USER: ${{ secrets.HOME_USER }}
-        DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-      run: |
-        echo "$SSH_PRIVATE_KEY" > key.pem
-        chmod 600 key.pem
-    
-        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-          -J $VPS_USER@$VPS_HOST $HOME_USER@localhost -p 2222 "
-            cd $DEPLOY_PATH &&
-            git pull origin main &&
-            composer install --no-dev --optimize-autoloader &&
-            php artisan migrate --force &&
-            php artisan config:cache &&
-            php artisan route:cache
-        "
+      - name: Setup SSH for Deployment
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          HOME_USER: ${{ secrets.HOME_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
+          ssh-keyscan -p 22 $VPS_HOST >> ~/.ssh/known_hosts
+          ssh-keyscan -p 2222 localhost >> ~/.ssh/known_hosts
 
+      - name: Deploy to Home Server through VPS
+        env:
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          HOME_USER: ${{ secrets.HOME_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=~/.ssh/known_hosts \
+            -J $VPS_USER@$VPS_HOST \
+            $HOME_USER@localhost -p 2222 "
+              cd $DEPLOY_PATH &&
+              git pull origin main &&
+              composer install --no-dev --optimize-autoloader &&
+              php artisan migrate --force &&
+              php artisan config:cache &&
+              php artisan route:cache
+            "
