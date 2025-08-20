@@ -12,7 +12,7 @@ use App\Http\Controllers\{
 
 Route::get('/', function () {
     return redirect()->route('home');
-})->name('home');
+})->name('landing');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
