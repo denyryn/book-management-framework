@@ -47,12 +47,14 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
     
-        ssh -i key.pem -o StrictHostKeyChecking=no -J $VPS_USER@$VPS_HOST -p 2222 $HOME_USER@localhost "
-          cd $DEPLOY_PATH &&
-          git pull origin main &&
-          composer install --no-dev --optimize-autoloader &&
-          php artisan migrate --force &&
-          php artisan config:cache &&
-          php artisan route:cache
+        ssh -i key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+          -J $VPS_USER@$VPS_HOST $HOME_USER@localhost -p 2222 "
+            cd $DEPLOY_PATH &&
+            git pull origin main &&
+            composer install --no-dev --optimize-autoloader &&
+            php artisan migrate --force &&
+            php artisan config:cache &&
+            php artisan route:cache
         "
+
 
