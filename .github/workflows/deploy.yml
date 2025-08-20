@@ -9,6 +9,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      COMPOSER_PROCESS_TIMEOUT: 0
+      COMPOSER_NO_INTERACTION: 1
+      COMPOSER_NO_AUDIT: 1
+      HOME_USER: ${{ secrets.HOME_USER }}
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,7 +26,7 @@ jobs:
         with:
           php-version: '8.4'
 
-      - name: Install Composer dependencies
+      - name: Install Composer dependencies (local build)
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
       - name: Copy .env
@@ -42,16 +50,13 @@ jobs:
       - name: Deploy to Home Server via reverse tunnel
         run: |
           ssh -o StrictHostKeyChecking=no \
-          -o UserKnownHostsFile=/dev/null \
-          -p 2222 \
-          "$HOME_USER@$VPS_HOST" "
-            cd $DEPLOY_PATH &&
-            git pull origin main &&
-            composer install --no-dev --optimize-autoloader &&
-            php artisan migrate --force &&
-            php artisan config:cache &&
-            php artisan route:cache
-          "
-
-
-
+              -o UserKnownHostsFile=/dev/null \
+              -p 2222 \
+              "$HOME_USER@$VPS_HOST" "
+                cd $DEPLOY_PATH &&
+                git pull origin main &&
+                composer install --no-dev --optimize-autoloader &&
+                php artisan migrate --force &&
+                php artisan config:cache &&
+                php artisan route:cache
+              "
