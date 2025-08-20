@@ -44,7 +44,7 @@ export function Table<T extends { id: number | string }>({ columns, data, onEdit
                         </th>
                         <th className="px-6 py-3">No</th>
                         {columns.map((col) => (
-                            <th key={col.key as any} className="px-6 py-3">
+                            <th key={col.key as number | string} className="px-6 py-3">
                                 {col.label}
                             </th>
                         ))}
@@ -61,7 +61,7 @@ export function Table<T extends { id: number | string }>({ columns, data, onEdit
                             <td className="px-6 py-4">{data.from! + index}</td>
                             {columns.map((col) => (
                                 <td key={col.key as string} className="px-6 py-4">
-                                    {col.render ? col.render(item) : (item as any)[col.key]}
+                                    {col.render ? col.render(item) : String((item as T)[col.key as keyof T] ?? '')}
                                 </td>
                             ))}
                             <td className="space-x-2 px-6 py-4">

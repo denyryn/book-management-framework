@@ -45,7 +45,7 @@ const unauthenticatedNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
-    const { auth, url } = usePage<SharedData>().props;
+    const { auth } = usePage<SharedData>().props;
     const { items, setItems } = React.useContext(SidenavContext);
 
     React.useEffect(() => {

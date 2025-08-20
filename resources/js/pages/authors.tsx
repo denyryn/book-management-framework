@@ -39,13 +39,13 @@ export default function AuthorsPage() {
 
     // Search handler
     const handleSearch = (q: string) => {
-        router.get('/authors', { search: debouncedQuery }, { preserveState: true, replace: true });
+        router.get('/authors', { search: q }, { preserveState: true, replace: true });
     };
 
     useEffect(() => {
         if (debouncedQuery === data.query) return;
         handleSearch(debouncedQuery);
-    }, [debouncedQuery]);
+    }, [debouncedQuery, data.query, handleSearch]);
 
     // Create / Update
     const openCreate = () => setForm({ name: '', mode: 'create' });
