@@ -38,17 +38,18 @@ jobs:
       - name: Setup SSH for Deployment
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          VPS_USER: ${{ secrets.VPS_USER }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
-          HOME_USER: ${{ secrets.HOME_USER }}
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+      
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+      
+          ssh-keyscan -p 22 $VPS_HOST >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -p 2222 localhost >> ~/.ssh/known_hosts 2>/dev/null
 
-          ssh-keyscan -p 22 $VPS_HOST >> ~/.ssh/known_hosts
-          ssh-keyscan -p 2222 localhost >> ~/.ssh/known_hosts
 
       - name: Deploy to Home Server through VPS
         env:
