@@ -52,16 +52,6 @@ export default function Homepage() {
         [filterQuery],
     );
 
-    // Handle filter changes from dialog
-    const handleFilterChange = useCallback(
-        (filters: FilterQuery) => {
-            const newFilters = { ...filterQuery, ...filters };
-            setFilterQuery(newFilters);
-            router.get('/home', newFilters, { preserveState: true, replace: true });
-        },
-        [filterQuery],
-    );
-
     // Check if any filters are active
     const hasActiveFilters = Object.values(filterQuery).some((value) => value !== undefined && value !== '' && value !== null);
 

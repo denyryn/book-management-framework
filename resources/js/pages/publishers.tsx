@@ -37,17 +37,16 @@ export default function PublishersPage() {
         ids: (number | string)[];
     }>({ type: null, ids: [] });
 
-    // Search handler
-    const handleSearch = (q: string) => {
-        router.get('/publishers', { search: q }, { preserveState: true, replace: true });
-    };
-
     useEffect(() => {
         if (debouncedQuery === data.query) return;
-        handleSearch(debouncedQuery);
-    }, [debouncedQuery, data.query, handleSearch]);
 
-    // Create / Update
+        const handleSearch = (q: string) => {
+            router.get('/publishers', { search: q }, { preserveState: true, replace: true });
+        };
+
+        handleSearch(debouncedQuery);
+    }, [debouncedQuery, data.query]);
+
     const openCreate = () => setForm({ name: '', mode: 'create' });
     const openUpdate = (publisher: Publisher) => setForm({ name: publisher.name, mode: 'update', id: publisher.id });
     const closeForm = () => setForm({ name: '', mode: null });
@@ -64,7 +63,6 @@ export default function PublishersPage() {
         }
     };
 
-    // Delete
     const openSingleDelete = (id: number | string) => setDeleteState({ type: 'single', ids: [id] });
     const openBulkDelete = () => {
         if (!checkedItems.length) return alert('No publishers selected.');

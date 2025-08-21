@@ -37,15 +37,15 @@ export default function AuthorsPage() {
         ids: (number | string)[];
     }>({ type: null, ids: [] });
 
-    // Search handler
-    const handleSearch = (q: string) => {
-        router.get('/authors', { search: q }, { preserveState: true, replace: true });
-    };
-
     useEffect(() => {
         if (debouncedQuery === data.query) return;
+
+        const handleSearch = (q: string) => {
+            router.get('/authors', { search: q }, { preserveState: true, replace: true });
+        };
+
         handleSearch(debouncedQuery);
-    }, [debouncedQuery, data.query, handleSearch]);
+    }, [debouncedQuery, data.query]);
 
     // Create / Update
     const openCreate = () => setForm({ name: '', mode: 'create' });

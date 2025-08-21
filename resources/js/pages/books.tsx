@@ -57,13 +57,15 @@ export default function BooksPage() {
         ids: (number | string)[];
     }>({ type: null, ids: [] });
 
-    const handleSearch = (q: string) => {
-        router.get('/books', { search: q }, { preserveState: true, replace: true });
-    };
-
     useEffect(() => {
-        if (debouncedQuery !== data.query) handleSearch(debouncedQuery);
-    }, [debouncedQuery, data.query, handleSearch]);
+        if (debouncedQuery === data.query) return;
+
+        const handleSearch = (q: string) => {
+            router.get('/books', { search: q }, { preserveState: true, replace: true });
+        };
+
+        handleSearch(debouncedQuery);
+    }, [debouncedQuery, data.query]);
 
     const openCreate = () =>
         setForm({
