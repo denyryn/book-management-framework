@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Author } from '@/types/author';
 import { Category } from '@/types/category';
@@ -16,6 +17,8 @@ type FilterDialogProps = {
         author_id?: number;
         publisher_id?: number;
         category_id?: number;
+        start_date?: string;
+        end_date?: string;
     };
     route: string;
     method?: 'GET' | 'POST';
@@ -35,10 +38,12 @@ export default function FilterDialog({
         author_id: initialFilters.author_id,
         publisher_id: initialFilters.publisher_id,
         category_id: initialFilters.category_id,
+        start_date: initialFilters.start_date,
+        end_date: initialFilters.end_date,
     });
 
     const handleClear = () => {
-        setFilters({ author_id: undefined, publisher_id: undefined, category_id: undefined });
+        setFilters({ author_id: undefined, publisher_id: undefined, category_id: undefined, start_date: undefined, end_date: undefined });
     };
 
     return (
@@ -114,6 +119,30 @@ export default function FilterDialog({
                             </SelectContent>
                         </Select>
                         <input type="hidden" name="category_id" value={filters.category_id ?? ''} />
+                    </div>
+
+                    {/* Date Filter */}
+                    <div className="mb-4 grid grid-cols-2 gap-4">
+                        <div>
+                            <label htmlFor="start_date">Start Date</label>
+                            <Input
+                                type="date"
+                                value={filters.start_date ?? ''}
+                                onChange={(e) => setFilters((prev) => ({ ...prev, start_date: e.target.value }))}
+                                className="mt-1 w-full"
+                            />
+                            <input type="hidden" name="start_date" value={filters.start_date ?? ''} />
+                        </div>
+                        <div>
+                            <label htmlFor="end_date">End Date</label>
+                            <Input
+                                type="date"
+                                value={filters.end_date ?? ''}
+                                onChange={(e) => setFilters((prev) => ({ ...prev, end_date: e.target.value }))}
+                                className="mt-1 w-full"
+                            />
+                            <input type="hidden" name="end_date" value={filters.end_date ?? ''} />
+                        </div>
                     </div>
 
                     <DialogFooter>

@@ -26,6 +26,8 @@ type FilterQuery = {
     author_id?: number;
     publisher_id?: number;
     category_id?: number;
+    start_date?: string;
+    end_date?: string;
 };
 
 export default function Homepage() {

@@ -18,6 +18,8 @@ class HomeController extends Controller
             'author_id' => $request->input('author_id', ''),
             'publisher_id' => $request->input('publisher_id', ''),
             'category_id' => $request->input('category_id', ''),
+            'start_date' => $request->input('start_date', ''),
+            'end_date' => $request->input('end_date', ''),
         ];
 
         $books = Book::with('author', 'publisher', 'category')

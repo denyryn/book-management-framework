@@ -59,7 +59,9 @@ class Book extends Model
         })
             ->when($filters['author_id'] ?? null, fn($q) => $q->where('author_id', $filters['author_id']))
             ->when($filters['publisher_id'] ?? null, fn($q) => $q->where('publisher_id', $filters['publisher_id']))
-            ->when($filters['category_id'] ?? null, fn($q) => $q->where('category_id', $filters['category_id']));
+            ->when($filters['category_id'] ?? null, fn($q) => $q->where('category_id', $filters['category_id']))
+            ->when($filters['start_date'] ?? null, fn($q) => $q->where('publication_date', '>=', $filters['start_date']))
+            ->when($filters['end_date'] ?? null, fn($q) => $q->where('publication_date', '<=', $filters['end_date']));
     }
 
     public function publisher()
