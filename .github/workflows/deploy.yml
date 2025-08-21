@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
@@ -46,7 +46,7 @@ jobs:
       - uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      
+
       - name: Deploy to Home Server via reverse tunnel
         run: |
           ssh -o StrictHostKeyChecking=no \
@@ -58,6 +58,7 @@ jobs:
                 composer install --no-dev --optimize-autoloader &&
                 php artisan migrate --force &&
                 php artisan config:cache &&
-                php -d opcache.jit=0 artisan route:cache
+                php -d opcache.jit=0 artisan route:cache &&
+                npm ci &&
+                npm run build
               "
-
