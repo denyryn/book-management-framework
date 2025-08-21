@@ -41,6 +41,27 @@ class Book extends Model
         });
     }
 
+    public function scopeWithFilters($query, array $filters)
+    {
+        return $query->when($filters['search'] ?? null, function ($q) use ($filters) {
+            $q->where(function ($query) use ($filters) {
+                $query->where('title', 'like', "%{$filters['search']}%")
+                    ->orWhereHas('author', function ($q) use ($filters) {
+                        $q->where('name', 'like', "%{$filters['search']}%");
+                    })
+                    ->orWhereHas('publisher', function ($q) use ($filters) {
+                        $q->where('name', 'like', "%{$filters['search']}%");
+                    })
+                    ->orWhereHas('category', function ($q) use ($filters) {
+                        $q->where('name', 'like', "%{$filters['search']}%");
+                    });
+            });
+        })
+            ->when($filters['author_id'] ?? null, fn($q) => $q->where('author_id', $filters['author_id']))
+            ->when($filters['publisher_id'] ?? null, fn($q) => $q->where('publisher_id', $filters['publisher_id']))
+            ->when($filters['category_id'] ?? null, fn($q) => $q->where('category_id', $filters['category_id']));
+    }
+
     public function publisher()
     {
         return $this->belongsTo(Publisher::class);

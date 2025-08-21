@@ -22,7 +22,7 @@ class BookFactory extends Factory
             'category_id' => \App\Models\Category::factory(),
             'title' => $this->faker->sentence(),
             'slug' => $this->faker->slug(),
-            'cover_image' => $this->faker->imageUrl(),
+            'cover_image' => null,
             'publication_date' => $this->faker->date(),
             'number_of_pages' => $this->faker->numberBetween(100, 1000),
         ];
