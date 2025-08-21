@@ -35,7 +35,7 @@ export function Table<T extends { id: number | string }>({ columns, data, onEdit
     };
 
     return (
-        <div className="relative w-full overflow-x-auto shadow-md">
+        <div className="relative w-full overflow-x-auto">
             <table className="w-full border-separate border-spacing-0 rounded-xl border text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
                     <tr>
@@ -53,31 +53,38 @@ export function Table<T extends { id: number | string }>({ columns, data, onEdit
                 </thead>
 
                 <tbody>
-                    {data.data.map((item, index) => (
-                        <tr className="border-b odd:bg-accent/30" key={item.id}>
-                            <td className="w-4 p-4">
-                                <Checkbox checked={checkedItems.includes(item.id)} onCheckedChange={() => handleCheck(item.id)} />
-                            </td>
-                            <td className="px-6 py-4">{data.from! + index}</td>
-                            {columns.map((col) => (
-                                <td key={col.key as string} className="px-6 py-4">
-                                    {col.render ? col.render(item) : String((item as T)[col.key as keyof T] ?? '')}
-                                </td>
-                            ))}
-                            <td className="space-x-2 px-6 py-4">
-                                {onEdit && (
-                                    <Button variant="ghost" className="text-blue-500" onClick={() => onEdit(item)}>
-                                        <Pen className="size-4" />
-                                    </Button>
-                                )}
-                                {onDelete && (
-                                    <Button onClick={() => onDelete(item)} variant="ghost" className="text-red-500">
-                                        <Trash2 className="size-4" />
-                                    </Button>
-                                )}
+                    {(data.data.length === 0 && (
+                        <tr>
+                            <td colSpan={columns.length + 2} className="py-4 text-center">
+                                No data available
                             </td>
                         </tr>
-                    ))}
+                    )) ||
+                        data.data.map((item, index) => (
+                            <tr className="border-b odd:bg-accent/30" key={item.id}>
+                                <td className="w-4 p-4">
+                                    <Checkbox checked={checkedItems.includes(item.id)} onCheckedChange={() => handleCheck(item.id)} />
+                                </td>
+                                <td className="px-6 py-4">{data.from! + index}</td>
+                                {columns.map((col) => (
+                                    <td key={col.key as string} className="px-6 py-4">
+                                        {col.render ? col.render(item) : String((item as T)[col.key as keyof T] ?? '')}
+                                    </td>
+                                ))}
+                                <td className="flex items-center space-x-2 px-6 py-4">
+                                    {onEdit && (
+                                        <Button variant="ghost" className="text-blue-500" onClick={() => onEdit(item)}>
+                                            <Pen className="size-4" />
+                                        </Button>
+                                    )}
+                                    {onDelete && (
+                                        <Button onClick={() => onDelete(item)} variant="ghost" className="text-red-500">
+                                            <Trash2 className="size-4" />
+                                        </Button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
 
@@ -99,8 +106,8 @@ export function Table<T extends { id: number | string }>({ columns, data, onEdit
                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                 className={`flex h-8 items-center justify-center border px-3 leading-tight ${
                                     link.active
-                                        ? 'text-blue-600 hover:text-blue-700 dark:text-white'
-                                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'
+                                        ? 'text-accent-foreground hover:text-accent-foreground dark:text-white'
+                                        : 'text-accent-foreground/40 hover:text-accent-foreground'
                                 } ${index === 0 ? 'rounded-s-lg border-gray-300 dark:border-gray-700' : ''} ${
                                     index === data.links.length - 1
                                         ? 'rounded-e-lg border-gray-300 dark:border-gray-700'

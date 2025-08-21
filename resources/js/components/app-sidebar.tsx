@@ -53,7 +53,7 @@ export function AppSidebar() {
     }, [auth.user, setItems]);
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="sidebar">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
