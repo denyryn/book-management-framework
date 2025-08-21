@@ -85,12 +85,11 @@ export default function PublishersPage() {
     return (
         <>
             <Head title="Publishers" />
-            <AppLayout>
+            <AppLayout headerChildren={<h2 className="text-xl font-bold">Publishers</h2>}>
                 <div className="flex min-h-screen flex-col gap-4 p-4">
                     <div className="flex h-fit w-full flex-col items-start gap-4 rounded-xl border-1 p-4">
                         {/* Header */}
                         <div className="flex w-full items-center justify-between">
-                            <h2 className="text-xl font-bold">Publishers</h2>
                             <div className="relative">
                                 <Search className="absolute top-1/2 left-2 size-5 -translate-y-1/2 transform text-gray-300" />
                                 <Input
@@ -105,7 +104,7 @@ export default function PublishersPage() {
                                 <Button variant="outline" className="transition-colors duration-100 hover:bg-red-500" onClick={openBulkDelete}>
                                     <Trash2 />
                                 </Button>
-                                <Button variant="outline" className="transition-colors duration-100 hover:bg-red-500" onClick={openCreate}>
+                                <Button variant="outline" className="text-accent-foreground duration-100 hover:bg-accent" onClick={openCreate}>
                                     <Plus />
                                 </Button>
                             </div>
@@ -156,7 +155,7 @@ export default function PublishersPage() {
                             <Button variant="outline" onClick={closeForm}>
                                 Cancel
                             </Button>
-                            <Button variant="destructive" onClick={confirmForm}>
+                            <Button variant="default" className="bg-accent-foreground text-accent" onClick={confirmForm}>
                                 {form.mode === 'create' ? 'Create' : 'Update'}
                             </Button>
                         </DialogFooter>
